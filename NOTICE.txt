@@ -1,0 +1,9 @@
+Redlink Solr Suggester
+Copyright 2024 Redlink GmbH
+
+This product includes software originally developed at
+Red Bull Media House (https://github.com/RBMHTechnology)
+
+The original "Vind Suggestion Handler" was developed was
+copied from backend/solr-ext/suggestion-handler
+at https://github.com/RBMHTechnology/vind
