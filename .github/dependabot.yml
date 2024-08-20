@@ -14,7 +14,13 @@ updates:
     directory: /
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "org.apache.solr:*"
+        update-types: ["version-update:semver-major"]
     groups:
+      solr:
+        patterns:
+          - "org.apache.solr:*"
       maven-plugins:
         patterns:
           - "org.apache.maven.plugins:*"
