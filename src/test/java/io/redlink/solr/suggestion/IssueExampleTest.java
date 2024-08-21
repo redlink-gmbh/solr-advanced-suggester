@@ -29,6 +29,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     @BeforeClass
     public static void init() throws Exception {
         System.setProperty("runtimeLib","false");
+        System.setProperty("solr.lock.type", "single");
 
         final File solrhome = temporaryFolder.newFolder("solrhome");
         final Path coreConfig =  solrhome.toPath().resolve("core/conf");

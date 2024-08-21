@@ -2,8 +2,8 @@ package io.redlink.solr.suggestion;
 
 import io.redlink.solr.suggestion.params.SuggestionRequestParams;
 import io.redlink.solr.suggestion.service.SuggestionService;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;

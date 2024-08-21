@@ -28,6 +28,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
         SolrTestCaseJ4.setupTestCases();
 
         System.setProperty("runtimeLib","false");
+        System.setProperty("solr.lock.type", "single");
 
         final File solrhome = temporaryFolder.newFolder("solrhome");
         final Path coreConfig =  solrhome.toPath().resolve("core/conf");

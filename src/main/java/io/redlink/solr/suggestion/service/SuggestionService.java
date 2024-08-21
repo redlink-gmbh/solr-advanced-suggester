@@ -8,7 +8,7 @@ import io.redlink.solr.suggestion.result.SuggesionResultSingle;
 import io.redlink.solr.suggestion.result.SuggestionResult;
 import io.redlink.solr.suggestion.result.SuggestionResultFactory;
 import io.redlink.solr.suggestion.result.SuggestionResultMulti;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.CommonParams;
@@ -123,7 +123,7 @@ public class SuggestionService {
         final SuggestionResult[] result;
         if(response.getValues().get("facets") instanceof SimpleOrderedMap) {
             final SimpleOrderedMap facets = (SimpleOrderedMap) response.getValues().get("facets");
-            if((Integer) facets.get("count") > 0) {
+            if((Long) facets.get("count") > 0) {
                 result = createResults(response, singleValueFields, multiValueFields, query, op, df,type,termLimit, limit, limitType, strategy,suggestionField,intervals);
             } else {
                 result = null;

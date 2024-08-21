@@ -137,13 +137,13 @@ public class SuggestionResultFactory {
                     final String filterName = fieldName.concat("_filter");
                     if(fieldFilters.get(filterName)!=null) {
                         final NamedList fieldResults = (NamedList) fieldFilters.get(filterName);
-                        if ((Integer) fieldResults.get("count") > 0) {
+                        if ((Long) fieldResults.get("count") > 0) {
                             List<NamedList> fieldValues = (List) (((NamedList) fieldResults.get(fieldName)).get("buckets"));
                             fieldValues.forEach(
                                     value -> {
                                         Matcher matcher = word.matcher(FieldAnalyzerService.analyzeString(core, df, value.get("val").toString()));
                                         if (matcher.find()) {
-                                            intervalResult.addFacet(intervalName,fieldName, value.get("val").toString(), (Integer) value.get("count"), matcher.start());
+                                            intervalResult.addFacet(intervalName,fieldName, value.get("val").toString(), ((Long) value.get("count")).intValue(), matcher.start());
                                         }
                                     }
                             );
@@ -157,13 +157,13 @@ public class SuggestionResultFactory {
             for (String fieldName : fields) {
                 final String filterName = fieldName.concat("_filter");
                 final NamedList fieldResults = (NamedList) facets.get(filterName);
-                if ((Integer) fieldResults.get("count") > 0) {
+                if ((Long) fieldResults.get("count") > 0) {
                     final List<NamedList> fieldValues = (List) (((NamedList) fieldResults.get(fieldName)).get("buckets"));
                     fieldValues.forEach(
                             value -> {
                                 final Matcher matcher = word.matcher(FieldAnalyzerService.analyzeString(core, df, value.get("val").toString()));
                                 if (matcher.find()) {
-                                    result.addFacet(fieldName, value.get("val").toString(), (Integer) value.get("count"), matcher.start());
+                                    result.addFacet(fieldName, value.get("val").toString(), ((Long) value.get("count")).intValue(), matcher.start());
                                 }
                             }
                     );
