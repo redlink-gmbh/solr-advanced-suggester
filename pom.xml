@@ -99,13 +99,9 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.solr</groupId>
-                <artifactId>solr-api</artifactId>
-                <version>${solr.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.solr</groupId>
                 <artifactId>solr-core</artifactId>
                 <version>${solr.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.solr</groupId>
@@ -115,22 +111,11 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.10.10</version>
-            </dependency>
-            <dependency>
                 <groupId>io.redlink.utils</groupId>
                 <artifactId>utils</artifactId>
                 <version>3.3.0</version>
+                <scope>test</scope>
             </dependency>
-
 
             <dependency>
                 <groupId>junit</groupId>
@@ -167,13 +152,9 @@
         </dependency>
 
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -278,6 +259,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <release>${java.version}</release>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>

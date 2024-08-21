@@ -23,7 +23,6 @@ import org.apache.solr.parser.QueryParser;
 import org.apache.solr.request.LocalSolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -342,9 +341,9 @@ public class SuggestionService {
             log.debug("internal request: {}", req.toString());
             log.debug("JSON facet query: {}", req.getJSON().toString());
             //execute query and return
-            final long millis = new DateTime().getMillis();
+            final long millis = System.currentTimeMillis();
             searchHandler.handleRequestBody(req, rsp);
-            log.info("Internal query for suggestions took a Total time of: {}ms",  new DateTime().getMillis() - millis);
+            log.info("Internal query for suggestions took a Total time of: {}ms",  System.currentTimeMillis() - millis);
             log.debug("internal response: {}", rsp.getValues().toString());
             return rsp;
         } catch (SolrException e) {
