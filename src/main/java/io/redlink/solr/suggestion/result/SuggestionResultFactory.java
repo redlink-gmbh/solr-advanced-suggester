@@ -81,7 +81,9 @@ public class SuggestionResultFactory {
         if (i < all.size()) {
             for (Facet facet : all.get(i)) {
                 List<Facet> fl = new ArrayList<Facet>(list);
-                if (!fl.contains(facet)) fl.add(facet);
+                if (!fl.contains(facet)) {
+                    fl.add(facet);
+                }
                 getMultiSuggestions(result, all, ++i, fl);
             }
         } else {
