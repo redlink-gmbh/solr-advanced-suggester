@@ -46,8 +46,8 @@ jobs:
       - name: Compile & Test
         run: ./mvnw -V -B --no-transfer-progress
           clean verify
-          -Psonarcloud-off
-          -Dsonar.projectKey=io.redlink.solr:solr-advanced-suggester
+          -Psonarcloud
+          -Dsonar.projectKey=redlink-gmbh_solr-advanced-suggester
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
