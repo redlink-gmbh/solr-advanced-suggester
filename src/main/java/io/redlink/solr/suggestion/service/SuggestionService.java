@@ -119,8 +119,12 @@ public class SuggestionService {
             result = createEmptyResults(type, limit, limitType);
         }
 
-        if (result[0] != null) rsp.add(SuggestionResultParams.SUGGESTIONS, result[0].write());
-        if (result[1] != null) rsp.add(SuggestionResultParams.MULTI_SUGGESTIONS, result[1].write());
+        if (result[0] != null) {
+            rsp.add(SuggestionResultParams.SUGGESTIONS, result[0].write());
+        }
+        if (result[1] != null) {
+            rsp.add(SuggestionResultParams.MULTI_SUGGESTIONS, result[1].write());
+        }
     }
 
     private SuggestionResult[] getSuggestionResults(String query, String op, String df, String[] singleValueFields, String[] multiValueFields, int termLimit, int limit, SuggestionRequestHandler.LimitType limitType, SuggestionRequestHandler.Type type, SuggestionRequestHandler.Strategy strategy, String suggestionField, Map<String, Map<String, Object>> intervals, SolrQueryResponse response) {
@@ -182,7 +186,9 @@ public class SuggestionService {
     private String getSpellCheckedQuery(SolrQueryResponse rsp) {
 
         //check if spellcheck result exists.
-        if (rsp.getValues().get("spellcheck") == null) return null;
+        if (rsp.getValues().get("spellcheck") == null) {
+            return null;
+        }
 
         final NamedList collations = (NamedList) ((NamedList) rsp.getValues().get("spellcheck")).get("collations");
 
