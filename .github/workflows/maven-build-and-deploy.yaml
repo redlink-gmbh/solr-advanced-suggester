@@ -45,16 +45,16 @@ jobs:
           cache: maven
       - name: Compile & Test
         run: ./mvnw -V -B --no-transfer-progress
-          clean package verify
+          clean verify
           -Psonarcloud
-          -Dsonar.projectKey=io.redlink.solr:solr-advanced-suggester
+          -Dsonar.projectKey=redlink-gmbh_solr-advanced-suggester
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           files: '**/TEST-*.xml'
 
@@ -64,7 +64,7 @@ jobs:
       - version
       - build
     runs-on: ubuntu-latest
-    if: github.repository == 'redlink-gmbh/solr-advanced-suggester'
+    if: "!always() && github.repository == 'redlink-gmbh/solr-advanced-suggester'"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -1,21 +1,16 @@
 package io.redlink.solr.suggestion.service;
 
+import java.io.IOException;
+import java.io.StringReader;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.solr.core.SolrCore;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class FieldAnalyzerService {
 
     /**
      * analyzes string like the given field
+     *
      * @param field the name of the field
      * @param value the string to analyze
      * @return the analyzed string

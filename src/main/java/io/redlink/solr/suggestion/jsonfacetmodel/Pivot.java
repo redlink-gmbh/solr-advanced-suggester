@@ -3,9 +3,6 @@ package io.redlink.solr.suggestion.jsonfacetmodel;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by fonso on 9/1/16.
- */
 public class Pivot {
 
     public facetType type;
@@ -71,15 +68,16 @@ public class Pivot {
     public void setFacet(Map<String, Pivot> facet) {
         this.facet = facet;
     }
+
     public void addFacet(String name, Pivot facet) {
-        if (this.facet==null) {
+        if (this.facet == null) {
             this.facet = new HashMap<>();
         }
-        this.facet.put(name,facet);
+        this.facet.put(name, facet);
     }
 
     public enum facetType {
-        terms,query
+        terms, query
     }
 }
 

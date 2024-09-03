@@ -2,7 +2,7 @@
 _An improved Suggestion-Handler for Solr_
 
 [![Build Status](https://github.com/redlink-gmbh/solr-advanced-suggester/actions/workflows/maven-build-and-deploy.yaml/badge.svg)](https://github.com/redlink-gmbh/solr-advanced-suggester/actions/workflows/maven-build-and-deploy.yaml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.redlink.solr%3Asolr-advanced-suggester&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.redlink.solr%3Asolr-advanced-suggester)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=redlink-gmbh_solr-advanced-suggester&metric=alert_status)](https://sonarcloud.io/dashboard?id=redlink-gmbh_solr-advanced-suggester)
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.redlink.solr/solr-advanced-suggester.png)](https://central.sonatype.com/namespace/io.redlink.solr)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/io.redlink.solr/solr-advanced-suggester.png)](https://oss.sonatype.org/#nexus-search;gav~io.redlink.solr~~~~)

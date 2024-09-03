@@ -1,10 +1,5 @@
 package io.redlink.solr.suggestion.params;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionRequestParams {
 
     public static final String SUGGESTION = "suggestion";

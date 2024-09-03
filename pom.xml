@@ -44,10 +44,21 @@
 
     <developers>
         <developer>
+            <id>alfonso-noriega</id>
+            <name>Alfonso Noriega Meneses</name>
+        </developer>
+        <developer>
+            <id>tkurz</id>
+            <name>Thomas Kurz</name>
+            <email>thomas.kurz@redlink.at</email>
+        </developer>
+        <developer>
+            <id>ja-fra</id>
             <name>Jakob Frank</name>
             <email>jakob.frank@redlink.at</email>
         </developer>
         <developer>
+            <id>westei</id>
             <name>Rupert Westenthaler</name>
             <email>rupert.westenthaler@redlink.at</email>
         </developer>
@@ -78,7 +89,7 @@
 
         <java.version>17</java.version>
 
-        <solr.version>8.11.0</solr.version>
+        <solr.version>[9.0,10-SNAPSHOT)</solr.version>
         <slf4j.version>1.7.13</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
@@ -88,13 +99,9 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.solr</groupId>
-                <artifactId>solr-api</artifactId>
-                <version>${solr.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.solr</groupId>
                 <artifactId>solr-core</artifactId>
                 <version>${solr.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.solr</groupId>
@@ -104,22 +111,11 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.10.10</version>
-            </dependency>
-            <dependency>
                 <groupId>io.redlink.utils</groupId>
                 <artifactId>utils</artifactId>
                 <version>3.3.0</version>
+                <scope>test</scope>
             </dependency>
-
 
             <dependency>
                 <groupId>junit</groupId>
@@ -156,13 +152,9 @@
         </dependency>
 
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -177,6 +169,11 @@
                     <artifactId>log4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.redlink.utils</groupId>
@@ -262,6 +259,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <release>${java.version}</release>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
