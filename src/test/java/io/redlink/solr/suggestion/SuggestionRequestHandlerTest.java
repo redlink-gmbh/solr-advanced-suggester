@@ -1,7 +1,9 @@
 package io.redlink.solr.suggestion;
+
 import io.redlink.solr.suggestion.params.SuggestionRequestParams;
 import io.redlink.utils.PathUtils;
 import io.redlink.utils.ResourceLoaderUtils;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.solr.SolrTestCaseJ4;
@@ -10,18 +12,13 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.LocalSolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequest;
-import org.junit.*;
-
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-
-/**
- * http://svn.apache.org/viewvc/lucene/dev/trunk/solr/core/src/test/org/apache/solr/handler/MoreLikeThisHandlerTest.java?view=markup
- *
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
     @ClassRule
@@ -33,10 +30,11 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public static void beforeClass() throws Exception {
         SolrTestCaseJ4.setupTestCases();
 
-        System.setProperty("runtimeLib","false");
+        System.setProperty("runtimeLib", "false");
+        System.setProperty("solr.lock.type", "single");
 
         final File solrhome = temporaryFolder.newFolder("solrhome");
-        final Path coreConfig =  solrhome.toPath().resolve("core/conf");
+        final Path coreConfig = solrhome.toPath().resolve("core/conf");
         Files.createDirectories(coreConfig);
         PathUtils.copyRecursive(ResourceLoaderUtils.getResourceAsPath("solr-home/config").toAbsolutePath(), coreConfig);
 
@@ -53,7 +51,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void setUp() throws Exception {
         super.setUp();
         assertU(adoc("_id_", "1",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "sebastian vettel",
                 "dynamic_multi_stored_suggest_analyzed_name", "mark webber",
                 "dynamic_multi_stored_suggest_analyzed_place", "Japan",
@@ -63,7 +61,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
                 "dynamic_single_stored_suggest_path_path1", "FIA Formula One World Championship 2012 - Suzuka",
                 "dynamic_single_stored_suggest_path_path2", "Red Bull Racing Team"));
         assertU(adoc("_id_", "2",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "sebastian vettel",
                 "dynamic_multi_stored_suggest_analyzed_name", "Daniel Ricciardo",
                 "dynamic_multi_stored_suggest_analyzed_place", "Malaysia",
@@ -71,35 +69,35 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
                 "dynamic_single_stored_suggest_path_path1", "FIA Formula One World Championship 2012 - kuala Lumpur",
                 "dynamic_single_stored_suggest_path_path2", "Red Bull Racing Team"));
         assertU(adoc("_id_", "3",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "stefan Bradl",
                 "dynamic_multi_stored_suggest_analyzed_place", "Japan",
                 "dynamic_multi_stored_suggest_analyzed_place", "suzuka",
                 "dynamic_multi_stored_suggest_analyzed_place", "kuala Lumpur",
-                "dynamic_multi_stored_suggest_analyzed_brand",  "citroën",
+                "dynamic_multi_stored_suggest_analyzed_brand", "citroën",
                 "dynamic_single_stored_suggest_path_path1", "Stefan Bradl - Lifestyle"));
         assertU(adoc("_id_", "4",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "X-Fighters",
                 "dynamic_multi_stored_suggest_analyzed_place", "Red Bull"));
         assertU(adoc("_id_", "5",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "RBXF",
                 "dynamic_multi_stored_suggest_analyzed_place", "RB"));
         assertU(adoc("_id_", "6",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_place", "Havanna kuba",
                 "dynamic_multi_stored_suggest_analyzed_place", "kurdistan"));
         assertU(adoc("_id_", "7",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "1/16 blabla",
                 "dynamic_multi_stored_suggest_analyzed_place", "RB"));
         assertU(adoc("_id_", "8",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "blabla 1/16",
                 "dynamic_multi_stored_suggest_analyzed_place", "RB"));
         assertU(adoc("_id_", "9",
-                "_type_","Asset",
+                "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "analized name",
                 "dynamic_multi_stored_suggest_analyzed_place", "unlugar 1234/5678"));
 
@@ -111,10 +109,10 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - without query param", req,
                 "//response/lst[@name='error']/int[@name='code'][.='400']",
@@ -123,18 +121,18 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         params.add(CommonParams.Q, "Sebastian");
 
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - without field params", req,
                 "//response/lst[@name='error']/int[@name='code'][.='400']",
                 "//response/lst[@name='error']/str[@name='msg'][.=\"SuggestionRequest needs to have at least one 'suggestion.field' parameter or one 'suggestion.multivalue.field' parameter defined.\"]");
 
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
 
-        params.add(SuggestionRequestParams.SUGGESTION_LIMIT,"0");
-        req = new LocalSolrQueryRequest( core, params );
+        params.add(SuggestionRequestParams.SUGGESTION_LIMIT, "0");
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - with wrong limit",req,
+        assertQ("suggester - with wrong limit", req,
                 "//response/lst[@name='error']/int[@name='code'][.='400']",
                 "//response/lst[@name='error']/str[@name='msg'][.=\"SuggestionRequest needs to have a 'suggestion.limit' greater than 0\"]");
     }
@@ -144,42 +142,42 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.Q,"Sebastian");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.Q, "Sebastian");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
         //params.add(SuggestionRequestParams.SUGGESTION_DF,"spellcheck");
 
-        assertQ("suggester - simple facet suggestion for 'Sebastian'",req,
+        assertQ("suggester - simple facet suggestion for 'Sebastian'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']");
 
         params.set(CommonParams.Q, "sebas");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - simple facet suggestion for 'sebas'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']");
 
         params.set(CommonParams.Q, "vettel");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - simple facet suggestion for 'vettel'",req,
+        assertQ("suggester - simple facet suggestion for 'vettel'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']");
 
-        params.set(CommonParams.Q,"hans");
-        req = new LocalSolrQueryRequest( core, params );
+        params.set(CommonParams.Q, "hans");
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - simple facet suggestion for 'hans'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='0']");
 
         params.set(CommonParams.Q, "S");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - simple facet suggestion for 'S'",req,
+        assertQ("suggester - simple facet suggestion for 'S'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='2']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='stefan Bradl'][.='1']");
@@ -191,15 +189,15 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.Q,"S");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_place");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.Q, "S");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_place");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - simple facet suggestion for 'S'",req,
+        assertQ("suggester - simple facet suggestion for 'S'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='3']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='stefan Bradl'][.='1']",
@@ -212,15 +210,15 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"sepastian");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_DF,"suggestions");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "sepastian");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_DF, "suggestions");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - spellcheck suggestion for 'sepastian'",req,
+        assertQ("suggester - spellcheck suggestion for 'sepastian'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='2']",
                 "//response/lst[@name='spellcheck']/lst[@name='collations']/str[@name='collation'][.='sebastian']");
@@ -232,15 +230,15 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"sebastian");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(CommonParams.FQ,"dynamic_multi_stored_suggest_analyzed_place:\"(1328869589310-619798898)\"");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "sebastian");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(CommonParams.FQ, "dynamic_multi_stored_suggest_analyzed_place:\"(1328869589310-619798898)\"");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - spellcheck suggestion for 'sepastian'",req,
+        assertQ("suggester - spellcheck suggestion for 'sepastian'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[@name='sebastian vettel'][.='1']");
 
@@ -250,27 +248,27 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void testCharacterMapping() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"citroën");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_brand");
-        params.add(SuggestionRequestParams.SUGGESTION_DF,"suggestions");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "citroën");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_brand");
+        params.add(SuggestionRequestParams.SUGGESTION_DF, "suggestions");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - character mapping 'Citroën'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_brand']/int[@name='citroën'][.='1']");
 
         params.set(CommonParams.Q, "citroen");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - character mapping 'citroen'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_brand']/int[@name='citroën'][.='1']");
 
         params.set(CommonParams.Q, "citroe");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - character mapping 'citroen'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
@@ -278,9 +276,9 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
 
         params.set(CommonParams.Q, "citro");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - character mapping 'citro'",req,
+        assertQ("suggester - character mapping 'citro'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_brand']/int[@name='citroën'][.='1']");
     }
@@ -289,13 +287,13 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void testLimitSingleSuggestions() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"s");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_place");
-        params.add(SuggestionRequestParams.SUGGESTION_LIMIT,"2");
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "s");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_place");
+        params.add(SuggestionRequestParams.SUGGESTION_LIMIT, "2");
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - limit test single with result for query 'S'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='2']",
@@ -303,7 +301,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_place']/int[@name='suzuka'][.='2']");
 
         params.add(SuggestionRequestParams.SUGGESTION_LIMIT_TYPE, SuggestionRequestHandler.LimitType.each.name());
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - limit test single with result for query 'S'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='3']",
@@ -313,9 +311,9 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
 
         params.set(CommonParams.Q, "y");
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - limit test single without result for query 'x'",req,
+        assertQ("suggester - limit test single without result for query 'x'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='0']");
     }
 
@@ -323,13 +321,13 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void sortingTest() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"s");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_place");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "s");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_place");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - test single sorting for 's' with 2 facets", req,
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_name']/int[1][.='2']",
@@ -348,12 +346,12 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void sortingTest2() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"ku");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_place");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "ku");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_place");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - test single sorting for 'ku' with 2 facets", req,
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_place']/int[@name='kuala Lumpur'][.='2']",
@@ -365,13 +363,13 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void testFacetTypesSingle() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"s");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_place");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "s");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_place");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ(req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='3']",
@@ -386,12 +384,12 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     public void testSynonyms() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"xfighter");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "xfighter");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
         assertQ("suggester - test synonym mapping for single facet", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='2']",
@@ -412,22 +410,22 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        params.add(SuggestionRequestParams.SUGGESTION,"true");
-        params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"2015/16, mexico");
-        params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_name");
-        params.add(SuggestionRequestParams.SUGGESTION_DF,"suggestions");
+        params.add(SuggestionRequestParams.SUGGESTION, "true");
+        params.add(CommonParams.QT, "/suggester");
+        params.add(CommonParams.Q, "2015/16, mexico");
+        params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
+        params.add(SuggestionRequestParams.SUGGESTION_DF, "suggestions");
 
-        SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
+        SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - spellcheck suggestion for '2015/16, mexico'",req,
+        assertQ("suggester - spellcheck suggestion for '2015/16, mexico'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='0']");
 
-        params.set(CommonParams.Q,"12345678 kurdistn");
+        params.set(CommonParams.Q, "12345678 kurdistn");
 
-        req = new LocalSolrQueryRequest( core, params );
+        req = new LocalSolrQueryRequest(core, params);
 
-        assertQ("suggester - spellcheck suggestion for '12345678 kurdistn'",req,
+        assertQ("suggester - spellcheck suggestion for '12345678 kurdistn'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='0']");
 
     }
