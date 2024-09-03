@@ -45,7 +45,7 @@ jobs:
           cache: maven
       - name: Compile & Test
         run: ./mvnw -V -B --no-transfer-progress
-          clean package verify
+          clean verify
           -Psonarcloud-off
           -Dsonar.projectKey=io.redlink.solr:solr-advanced-suggester
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}

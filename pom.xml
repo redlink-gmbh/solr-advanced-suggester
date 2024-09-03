@@ -89,7 +89,7 @@
 
         <java.version>17</java.version>
 
-        <solr.version>9.6.1</solr.version>
+        <solr.version>[9.0,10-SNAPSHOT)</solr.version>
         <slf4j.version>1.7.13</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
