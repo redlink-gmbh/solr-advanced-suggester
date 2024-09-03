@@ -1,7 +1,6 @@
 package io.redlink.solr.suggestion.result;
 
 import io.redlink.solr.suggestion.SuggestionRequestHandler;
-
 import java.time.LocalDateTime;
 
 class Interval {
@@ -9,9 +8,9 @@ class Interval {
     int count;
     LocalDateTime start;
     LocalDateTime end;
-   SuggestionResult facets ;
+    SuggestionResult facets;
 
-    public Interval(LocalDateTime start, LocalDateTime end, int limit,SuggestionRequestHandler.LimitType limitType ) {
+    public Interval(LocalDateTime start, LocalDateTime end, int limit, SuggestionRequestHandler.LimitType limitType) {
         this.start = start;
         this.end = end;
         this.facets = new SuggesionResultSingle(limit, limitType);
@@ -48,9 +47,9 @@ class Interval {
 
     public boolean equals(Object o) {
         try {
-            return ((Interval)o).start.isEqual(this.start) && ((Interval)o).end.isEqual(this.end);
+            return ((Interval) o).start.isEqual(this.start) && ((Interval) o).end.isEqual(this.end);
         } catch (Exception e) {
-          return false;
+            return false;
         }
     }
 }

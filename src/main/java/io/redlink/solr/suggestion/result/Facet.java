@@ -4,7 +4,7 @@ package io.redlink.solr.suggestion.result;
  * Represents a simple facet POJO
  */
 class Facet {
-    String name,value;
+    String name, value;
     int count;
 
     public Facet(String name, String value, int count) {
@@ -39,9 +39,9 @@ class Facet {
 
     public boolean equals(Object o) {
         try {
-            return ((Facet)o).name.equals(this.name) && ((Facet)o).value.equals(this.value);
+            return ((Facet) o).name.equals(this.name) && ((Facet) o).value.equals(this.value);
         } catch (Exception e) {
-          return false;
+            return false;
         }
     }
 }

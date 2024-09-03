@@ -45,7 +45,6 @@
         <maxBooleanClauses>1024</maxBooleanClauses>
 
 
-
         <filterCache class="solr.CaffeineCache"
                      size="512"
                      initialSize="512"
@@ -65,7 +64,7 @@
                size="10"
                initialSize="0"
                autowarmCount="10"
-               regenerator="solr.NoOpRegenerator" />
+               regenerator="solr.NoOpRegenerator"/>
 
         <enableLazyFieldLoading>true</enableLazyFieldLoading>
         <queryResultWindowSize>20</queryResultWindowSize>
@@ -77,16 +76,16 @@
     </query>
 
 
-    <requestDispatcher handleSelect="false" >
+    <requestDispatcher handleSelect="false">
         <requestParsers enableRemoteStreaming="true"
                         multipartUploadLimitInKB="2048000"
                         formdataUploadLimitInKB="2048"
                         addHttpRequestToContext="false"/>
-        <httpCaching never304="true" />
+        <httpCaching never304="true"/>
     </requestDispatcher>
 
     <!-- Solr analysis handlers-->
-    <requestHandler name="/analysis/field" class="solr.FieldAnalysisRequestHandler" />
+    <requestHandler name="/analysis/field" class="solr.FieldAnalysisRequestHandler"/>
 
     <requestHandler name="/get" class="solr.RealTimeGetHandler">
         <lst name="defaults">
@@ -107,7 +106,8 @@
         </arr>
     </requestHandler>
 
-    <requestHandler runtimeLib="${runtimeLib:true}" name="/suggester" class="io.redlink.solr.suggestion.SuggestionRequestHandler">
+    <requestHandler runtimeLib="${runtimeLib:true}" name="/suggester"
+                    class="io.redlink.solr.suggestion.SuggestionRequestHandler">
         <lst name="defaults">
             <str name="echoParams">explicit</str>
             <str name="suggestion">true</str>
