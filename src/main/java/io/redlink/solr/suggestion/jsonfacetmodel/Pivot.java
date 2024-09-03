@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class Pivot {
 
-    public facetType type;
-    public String q;
-    public String field;
-    public int limit;
-    public int mincount;
-    public Map<String, Pivot> facet;
+    private facetType type;
+    private String q;
+    private String field;
+    private int limit;
+    private int mincount;
+    private Map<String, Pivot> facet;
 
     public Pivot() {
         type = null;
@@ -76,6 +76,7 @@ public class Pivot {
         this.facet.put(name, facet);
     }
 
+    @SuppressWarnings("java:S115")
     public enum facetType {
         terms, query
     }
