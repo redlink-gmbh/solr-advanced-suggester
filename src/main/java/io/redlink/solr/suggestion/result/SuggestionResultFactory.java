@@ -14,10 +14,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * ...
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionResultFactory {
 
     /**

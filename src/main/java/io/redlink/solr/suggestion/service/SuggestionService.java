@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * This suggestion service queries a given core for facet suggestions based on an input string
  * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
+ * Author: Thomas Kurz
  * Author: Alfonso Noriega Meneses
  */
 public class SuggestionService {

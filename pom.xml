@@ -44,10 +44,21 @@
 
     <developers>
         <developer>
+            <id>alfonso-noriega</id>
+            <name>Alfonso Noriega Meneses</name>
+        </developer>
+        <developer>
+            <id>tkurz</id>
+            <name>Thomas Kurz</name>
+            <email>thomas.kurz@redlink.at</email>
+        </developer>
+        <developer>
+            <id>ja-fra</id>
             <name>Jakob Frank</name>
             <email>jakob.frank@redlink.at</email>
         </developer>
         <developer>
+            <id>westei</id>
             <name>Rupert Westenthaler</name>
             <email>rupert.westenthaler@redlink.at</email>
         </developer>

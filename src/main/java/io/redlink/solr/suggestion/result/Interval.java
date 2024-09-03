@@ -4,11 +4,6 @@ import io.redlink.solr.suggestion.SuggestionRequestHandler;
 
 import java.time.LocalDateTime;
 
-/**
- * Represents a simple facet POJO
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 class Interval {
 
     int count;

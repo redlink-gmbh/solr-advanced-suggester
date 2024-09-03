@@ -20,11 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * <a href="https://svn.apache.org/repos/asf/lucene/solr/branches/branch-1.4/src/java/org/apache/solr/handler/">...</a>
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionRequestHandler extends SearchHandler implements SolrCoreAware {
 
     private static final String DEFAULT_END_VALUE = "NOW/DAY";

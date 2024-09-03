@@ -2,8 +2,6 @@ package io.redlink.solr.suggestion.result;
 
 /**
  * Represents a simple facet POJO
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
  */
 class Facet {
     String name,value;

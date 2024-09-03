@@ -19,11 +19,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class IssueExampleTest extends SolrTestCaseJ4 {
 
     @ClassRule
@@ -64,7 +59,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
         assertU(adoc("_id_", "6",
                 "_type_","Asset",
                 "dynamic_multi_stored_suggest_analyzed_index", "12",
-                "dynamic_multi_stored_suggest_analyzed_id", "MI123-456-789"));
+                "dynamic_multi_stored_suggest_analyzed_id", "ID123-456-789"));
         assertU(adoc("_id_", "7",
                 "_type_","Asset",
                 "dynamic_single_stored_suggest_path_hierarchy1", "this/is a/test",
@@ -84,10 +79,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
         core.close();
     }*/
 
-    /**
-     * test MBC-1166 (Suggestions with special characters do not always work)
-     */
-    public void test_MBC_1166() {
+    public void testSpecialChars() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -120,12 +112,11 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     /**
-     * Tests MBC-1203 (Static synonyms)
      * Attention! To enable this, make sure that you use the WhiteSpaceTokenizer (for query and index).
      */
     @Test
     @Ignore //At the moment synonyms are not supported in suggestions
-    public void testSynonymes() {
+    public void testStaticSynonyms() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -144,10 +135,10 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     /**
-     * Test issue MBO-492 (Load suggestions fails with searchterm "123")
+     * Load suggestions fails with searchterm "123"
      */
     @Test
-    public void NumberTest() {
+    public void testWithNumbers() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
         params.add(SuggestionRequestParams.SUGGESTION,"true");
@@ -179,7 +170,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     /**
      * Test if parameters are parsed
      */
-    public void test_MBV_351() {
+    public void testParameterParsing() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         SolrQueryRequest req = new LocalSolrQueryRequest( core, params );
@@ -211,7 +202,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
 
     }
 
-    public void test_MBC_2527() {
+    public void testEmptyNumberSuggestion() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -229,7 +220,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
 
     }
 
-    public void test_MBV_357() {
+    public void testWithInvalidField() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -248,13 +239,13 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     //Test should fail regarding the issue. TODO check schema.xml that is used as basis for the issue
-    public void test_MBC_3646_1() {
+    public void testIdSearch() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
         params.add(SuggestionRequestParams.SUGGESTION,"true");
         params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"MI123");
+        params.add(CommonParams.Q,"ID123");
         params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_id");
         params.add(SuggestionRequestParams.SUGGESTION_DF,"suggestions");
 
@@ -262,18 +253,18 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
 
         assertQ("suggester - test number search without result", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
-                "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_id']/int[@name='MI123-456-789'][.='1']");
+                "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_analyzed_id']/int[@name='ID123-456-789'][.='1']");
     }
 
     //Test: The full text suggestions (spellcheck) display values which do not deliver search results
-    public void test_MBC_3646_2() {
+    public void testIdSearchNoSpellcheck() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
         params.add(SuggestionRequestParams.SUGGESTION,"true");
         params.add(CommonParams.QT,"/suggester");
-        params.add(CommonParams.Q,"MI123-456-788");
-        params.add(CommonParams.FQ,"dynamic_multi_stored_suggest_analyzed_id:MI123-456-788"); //filter for non existing facet -> no suggestion should be returned
+        params.add(CommonParams.Q,"ID123-456-788");
+        params.add(CommonParams.FQ,"dynamic_multi_stored_suggest_analyzed_id:ID123-456-788"); //filter for non existing facet -> no suggestion should be returned
         params.add(SuggestionRequestParams.SUGGESTION_FIELD,"dynamic_multi_stored_suggest_analyzed_id");
         params.add(SuggestionRequestParams.SUGGESTION_DF,"suggestions");
 
@@ -283,10 +274,10 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
                 "not(//response/lst[@name='spellcheck'])");
     }
 
-    //MSM-2832 path field integration
+    //path field integration
     //Path fields are not supported by Vind
     @Ignore
-    public void test_MSM_2832() {
+    public void testPathFieldIntegration() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -337,7 +328,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     @Test
-    public void test_PSD_3756() {
+    public void testTheRealDingo() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 

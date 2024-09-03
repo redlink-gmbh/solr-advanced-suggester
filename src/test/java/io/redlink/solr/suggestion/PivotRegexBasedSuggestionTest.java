@@ -18,11 +18,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
 
     @ClassRule

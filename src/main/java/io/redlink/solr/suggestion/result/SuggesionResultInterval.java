@@ -5,11 +5,6 @@ import io.redlink.solr.suggestion.SuggestionRequestHandler;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggesionResultInterval implements SuggestionResult {
 
     private int count = 0;

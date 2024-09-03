@@ -16,12 +16,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
-/**
- * http://svn.apache.org/viewvc/lucene/dev/trunk/solr/core/src/test/org/apache/solr/handler/MoreLikeThisHandlerTest.java?view=markup
- *
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
 
     @ClassRule

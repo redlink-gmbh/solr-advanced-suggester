@@ -7,11 +7,6 @@ import org.apache.solr.core.SolrCore;
 import java.io.IOException;
 import java.io.StringReader;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class FieldAnalyzerService {
 
     /**

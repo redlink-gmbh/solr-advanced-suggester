@@ -7,11 +7,6 @@ import io.redlink.solr.suggestion.SuggestionRequestHandler;
 import org.apache.solr.common.util.NamedList;
 
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggesionResultSingle implements SuggestionResult {
 
     private int count = 0;

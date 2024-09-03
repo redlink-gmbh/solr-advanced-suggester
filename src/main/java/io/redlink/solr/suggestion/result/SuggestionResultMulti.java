@@ -6,11 +6,6 @@ import org.apache.solr.common.util.NamedList;
 
 import java.util.*;
 
-/**
- * ...
- * <p/>
- * Author: Thomas Kurz (tkurz@apache.org)
- */
 public class SuggestionResultMulti implements SuggestionResult {
 
     private int count = 0;
