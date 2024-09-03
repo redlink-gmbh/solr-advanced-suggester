@@ -84,7 +84,9 @@ public class SuggesionResultSingle implements SuggestionResult {
                     if (fields.get(field).size() > number) {
                         more = true;
                         c++;
-                        if (!_f.containsKey(field)) _f.put(field, new ArrayList<Facet>());
+                        if (!_f.containsKey(field)) {
+                            _f.put(field, new ArrayList<Facet>());
+                        }
                         _f.get(field).add(fields.get(field).get(number));
                     }
                     if (c == limit) break;
