@@ -31,9 +31,12 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
         mixed;
 
         public static Type parse(String s, Type def) {
+            if (s == null) {
+                return def;
+            }
             try {
                 return valueOf(s);
-            } catch (NullPointerException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return def;
             }
         }
@@ -44,9 +47,12 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
         permutate;
 
         public static Strategy parse(String s, Strategy def) {
+            if (s == null) {
+                return def;
+            }
             try {
                 return valueOf(s);
-            } catch (NullPointerException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return def;
             }
         }
@@ -57,15 +63,18 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
         each;
 
         public static LimitType parse(String s, LimitType def) {
+            if (s == null) {
+                return def;
+            }
             try {
                 return valueOf(s);
-            } catch (NullPointerException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return def;
             }
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(SuggestionRequestHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuggestionRequestHandler.class);
 
     private SuggestionService suggestionService;
 
@@ -236,7 +245,7 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
 
             }
 
-            logger.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, paramFqs != null ? StringUtils.join(paramFqs, ",") : "none");
+            LOGGER.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, paramFqs != null ? StringUtils.join(paramFqs, ",") : "none");
 
             suggestionService.run(rsp, params, q, paramDf, allFields, paramSingleFields, paramMultivalueFields, paramFqs, paramTermLimit, paramLimit, paramLimitType, type, paramStrategy, intervalField, rangesMap);
 
