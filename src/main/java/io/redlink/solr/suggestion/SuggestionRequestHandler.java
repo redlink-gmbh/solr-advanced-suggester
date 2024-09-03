@@ -107,22 +107,22 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
         strategy = args.get(SuggestionRequestParams.SUGGESTION_STRATEGY) != null ?
                 Strategy.parse((String) args.get(SuggestionRequestParams.SUGGESTION_STRATEGY), strategy) : strategy;
 
-        List<String> fields = args.getAll(SuggestionRequestParams.SUGGESTION_FIELD) != null ?
+        List<String> argFields = args.getAll(SuggestionRequestParams.SUGGESTION_FIELD) != null ?
                 args.getAll(SuggestionRequestParams.SUGGESTION_FIELD) : Collections.emptyList();
-        if (!fields.isEmpty()) {
-            this.fields = fields.toArray(new String[fields.size()]);
+        if (!argFields.isEmpty()) {
+            this.fields = argFields.toArray(new String[0]);
         }
 
-        List<String> multivalueFields = args.getAll(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ?
+        List<String> argMultivalueFields = args.getAll(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ?
                 args.getAll(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) : Collections.emptyList();
-        if (!multivalueFields.isEmpty()) {
-            this.multivalueFields = fields.toArray(new String[multivalueFields.size()]);
+        if (!argMultivalueFields.isEmpty()) {
+            this.multivalueFields = argFields.toArray(new String[argMultivalueFields.size()]);
         }
 
-        List<String> fqs = args.getAll(CommonParams.FQ) != null ?
+        List<String> argFqs = args.getAll(CommonParams.FQ) != null ?
                 args.getAll(CommonParams.FQ) : Collections.emptyList();
-        if (!fqs.isEmpty()) {
-            this.fqs = fqs.toArray(new String[fields.size()]);
+        if (!argFqs.isEmpty()) {
+            this.fqs = argFqs.toArray(new String[argFields.size()]);
         }
 
     }
@@ -140,44 +140,44 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
                 return;
             }
 
-            String[] single_fields = params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) : fields;
+            String[] paramSingleFields = params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) : fields;
 
-            String[] multivalue_fields = params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) : multivalueFields;
+            String[] paramMultivalueFields = params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) : multivalueFields;
 
-            if (single_fields == null && multivalue_fields == null) {
+            if (paramSingleFields == null && paramMultivalueFields == null) {
                 rsp.add("error", error(400, "SuggestionRequest needs to have at least one 'suggestion.field' parameter or one 'suggestion.multivalue.field' parameter defined."));
                 return;
             }
 
-            int termLimit = params.getInt(SuggestionRequestParams.SUGGESTION_TERM_LIMIT, this.termLimit);
-            if (termLimit < 1) {
+            int paramTermLimit = params.getInt(SuggestionRequestParams.SUGGESTION_TERM_LIMIT, this.termLimit);
+            if (paramTermLimit < 1) {
                 rsp.add("error", error(400, "SuggestionRequest needs to have a 'suggestion.term.limit' greater than 0"));
                 return;
             }
 
-            int limit = params.getInt(SuggestionRequestParams.SUGGESTION_LIMIT, this.limit);
-            if (limit < 1) {
+            int paramLimit = params.getInt(SuggestionRequestParams.SUGGESTION_LIMIT, this.limit);
+            if (paramLimit < 1) {
                 rsp.add("error", error(400, "SuggestionRequest needs to have a 'suggestion.limit' greater than 0"));
                 return;
             }
 
-            String df = params.get(SuggestionRequestParams.SUGGESTION_DF, this.df);
-            if (df == null) {
+            String paramDf = params.get(SuggestionRequestParams.SUGGESTION_DF, this.df);
+            if (paramDf == null) {
                 rsp.add("error", error(400, "SuggestionRequest needs to have a 'df' parameter"));
                 return;
             }
 
-            final Strategy strategy = Strategy.parse(params.get(SuggestionRequestParams.SUGGESTION_STRATEGY, null), this.strategy);
+            final Strategy paramStrategy = Strategy.parse(params.get(SuggestionRequestParams.SUGGESTION_STRATEGY, null), this.strategy);
 
-            final LimitType limitType = LimitType.parse(params.get(SuggestionRequestParams.SUGGESTION_LIMIT_TYPE, null), this.limitType);
+            final LimitType paramLimitType = LimitType.parse(params.get(SuggestionRequestParams.SUGGESTION_LIMIT_TYPE, null), this.limitType);
 
-            final String[] fqs = params.getParams(CommonParams.FQ) != null ? params.getParams(CommonParams.FQ) : this.fqs;
+            final String[] paramFqs = params.getParams(CommonParams.FQ) != null ? params.getParams(CommonParams.FQ) : this.fqs;
 
             Type type;
 
-            if (single_fields != null && multivalue_fields == null) {
+            if (paramSingleFields != null && paramMultivalueFields == null) {
                 type = Type.single;
-            } else if (single_fields == null) {
+            } else if (paramSingleFields == null) {
                 type = Type.multi;
                 rsp.add("warning", error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
                 //return;
@@ -186,7 +186,7 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
                 rsp.add("warning", error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
             }
 
-            final String[] fields = (String[]) ArrayUtils.addAll(single_fields, multivalue_fields);
+            final String[] allFields = ArrayUtils.addAll(paramSingleFields, paramMultivalueFields);
 
             ///////////////////////
             //Suggestion Intervals
@@ -236,9 +236,9 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
 
             }
 
-            logger.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, fqs != null ? StringUtils.join(fqs, ",") : "none");
+            logger.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, paramFqs != null ? StringUtils.join(paramFqs, ",") : "none");
 
-            suggestionService.run(rsp, params, q, df, fields, single_fields, multivalue_fields, fqs, termLimit, limit, limitType, type, strategy, intervalField, rangesMap);
+            suggestionService.run(rsp, params, q, paramDf, allFields, paramSingleFields, paramMultivalueFields, paramFqs, paramTermLimit, paramLimit, paramLimitType, type, paramStrategy, intervalField, rangesMap);
 
         } else {
             super.handleRequestBody(req, rsp);
@@ -246,7 +246,7 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
     }
 
     private HashMap<String, Object> error(int code, String msg) {
-        final HashMap<String, Object> error = new HashMap<String, Object>();
+        final HashMap<String, Object> error = new HashMap<>();
         error.put("msg", msg);
         error.put("code", code);
         return error;
