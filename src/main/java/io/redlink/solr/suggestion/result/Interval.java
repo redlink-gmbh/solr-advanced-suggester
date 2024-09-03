@@ -47,7 +47,7 @@ class Interval {
 
     public boolean equals(Object o) {
         try {
-            return ((Interval) o).start.isEqual(this.start) && ((Interval) o).end.isEqual(this.end);
+            return o!= null && ((Interval) o).start.isEqual(this.start) && ((Interval) o).end.isEqual(this.end);
         } catch (Exception e) {
             return false;
         }

@@ -19,6 +19,7 @@ import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("java:S115")
 public class SuggestionRequestHandler extends SearchHandler implements SolrCoreAware {
 
     private static final String DEFAULT_END_VALUE = "NOW/DAY";
@@ -81,6 +82,7 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
     private static boolean SUGGESTION_INTERVAL = false;
     private static boolean SUGGESTION_INTERVAL_OTHER = false;
 
+    @Override
     public void inform(SolrCore core) {
         super.inform(core);
         suggestionService = new SuggestionService(core, this.getInitArgs());

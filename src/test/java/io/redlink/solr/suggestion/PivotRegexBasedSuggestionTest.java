@@ -15,6 +15,7 @@ import org.apache.solr.request.LocalSolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequest;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
@@ -90,6 +91,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
     /**
      *
      */
+    @Test
     public void testSuggestionIntervals() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -136,6 +138,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_intervals']/lst[@name='last_year']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_string_name']/int[@name='sebastien loeb'][.='2']");
     }
 
+    @Test
     public void testSuggestionIntervalsDateMath() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -176,6 +179,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
     /**
      *
      */
+    @Test
     public void testSuggestionNoIntervals() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -209,6 +213,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
                 "//response/lst[@name='suggestions']/lst[@name='suggestion_facets']/lst[@name='dynamic_multi_stored_suggest_string_name']/int[@name='sebastien vettel'][.='1']");
     }
 
+    @Test
     public void testQueryPlusSeparator() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -226,6 +231,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
 
     }
 
+    @Test
     public void testQueryTermLimit() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();

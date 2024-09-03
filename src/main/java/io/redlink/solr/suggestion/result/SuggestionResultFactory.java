@@ -45,12 +45,14 @@ public class SuggestionResultFactory {
             for (String field : fields) {
                 Iterator<Map.Entry> iter = ((NamedList) facets.get(field)).iterator();
                 while (iter.hasNext()) {
-                    Map.Entry<String, NamedList<Object>> entry = iter.next();
+                    Map.Entry<String, Integer> entry = iter.next();
                     String s = " " + FieldAnalyzerService.analyzeString(core, df, entry.getKey());
                     //try if it maps to current fields
                     if (s.toLowerCase().contains(" " + qps[i].toLowerCase())) {
-                        Object o = entry.getValue();
-                        l.addLast(new Facet(field, entry.getKey(), (Integer) o));
+                        Integer count = entry.getValue();
+                        if (count != null) {
+                            l.addLast(new Facet(field, entry.getKey(), count));
+                        }
                     }
                 }
             }

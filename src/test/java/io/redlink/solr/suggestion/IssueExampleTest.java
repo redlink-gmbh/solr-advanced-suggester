@@ -80,6 +80,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
         core.close();
     }*/
 
+    @Test
     public void testSpecialChars() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -171,6 +172,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     /**
      * Test if parameters are parsed
      */
+    @Test
     public void testParameterParsing() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -203,6 +205,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
 
     }
 
+    @Test
     public void testEmptyNumberSuggestion() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -221,6 +224,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
 
     }
 
+    @Test
     public void testWithInvalidField() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -240,6 +244,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     //Test should fail regarding the issue. TODO check schema.xml that is used as basis for the issue
+    @Test
     public void testIdSearch() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -258,6 +263,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     //Test: The full text suggestions (spellcheck) display values which do not deliver search results
+    @Test
     public void testIdSearchNoSpellcheck() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();

@@ -39,7 +39,7 @@ class Facet {
 
     public boolean equals(Object o) {
         try {
-            return ((Facet) o).name.equals(this.name) && ((Facet) o).value.equals(this.value);
+            return o!= null && ((Facet) o).name.equals(this.name) && ((Facet) o).value.equals(this.value);
         } catch (Exception e) {
             return false;
         }
