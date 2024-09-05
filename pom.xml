@@ -24,7 +24,7 @@
     <packaging>jar</packaging>
 
     <name>Redlink Solr Suggester</name>
-    <description>Advanced Suggestion-Handler for Solr</description>
+    <description>Advanced Suggestion-Handler for Solr, based on Vind</description>
     <url>https://github.com/redlink-gmbh/solr-advanced-suggester</url>
     <inceptionYear>2024</inceptionYear>
 
@@ -90,94 +90,26 @@
         <java.version>17</java.version>
 
         <solr.version>[9.0,10-SNAPSHOT)</solr.version>
-        <slf4j.version>1.7.13</slf4j.version>
-        <junit.version>4.13.2</junit.version>
-        <hamcrest.version>3.0</hamcrest.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.solr</groupId>
-                <artifactId>solr-core</artifactId>
-                <version>${solr.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.solr</groupId>
-                <artifactId>solr-test-framework</artifactId>
-                <version>${solr.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.redlink.utils</groupId>
-                <artifactId>utils</artifactId>
-                <version>3.3.0</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.awaitility</groupId>
-                <artifactId>awaitility</artifactId>
-                <version>4.2.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-library</artifactId>
-                <version>${hamcrest.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
+            <version>${solr.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-test-framework</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <version>${solr.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.redlink.utils</groupId>
             <artifactId>utils</artifactId>
+            <version>3.3.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
