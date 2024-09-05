@@ -5,8 +5,14 @@ import java.io.StringReader;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.solr.core.SolrCore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FieldAnalyzerService {
+public final class FieldAnalyzerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FieldAnalyzerService.class);
+
+    private FieldAnalyzerService() {}
 
     /**
      * analyzes string like the given field
@@ -17,7 +23,7 @@ public class FieldAnalyzerService {
      */
     public static String analyzeString(SolrCore core, String field, String value) {
         try {
-            StringBuilder b = new StringBuilder();
+            final StringBuilder b = new StringBuilder();
             try (TokenStream ts = core.getLatestSchema().getFieldType(field).getQueryAnalyzer().tokenStream(field, new StringReader(value))) {
                 ts.reset();
                 while (ts.incrementToken()) {
@@ -29,8 +35,7 @@ public class FieldAnalyzerService {
 
             return b.toString().trim();
         } catch (IOException e) {
-            //FIXME: This error should be properly logged!
-            e.printStackTrace();
+            LOGGER.warn("Failed to analyze field '{}' with value '{}'", field, value, e);
             return value;
         }
     }
