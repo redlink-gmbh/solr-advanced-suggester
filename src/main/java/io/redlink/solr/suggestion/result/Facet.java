@@ -1,11 +1,14 @@
 package io.redlink.solr.suggestion.result;
 
+import java.util.Objects;
+
 /**
  * Represents a simple facet POJO
  */
 class Facet {
-    String name, value;
-    int count;
+    private String name;
+    private String value;
+    private int count;
 
     public Facet(String name, String value, int count) {
         this.name = name;
@@ -37,11 +40,23 @@ class Facet {
         this.count = count;
     }
 
+    @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
         try {
-            return o!= null && ((Facet) o).name.equals(this.name) && ((Facet) o).value.equals(this.value);
+            return ((Facet) o).name.equals(this.name) && ((Facet) o).value.equals(this.value);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, value);
     }
 }

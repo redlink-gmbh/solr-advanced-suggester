@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class SuggesionResultInterval implements SuggestionResult {
 
-    private int count = 0;
     private int limit = Integer.MAX_VALUE;
     private SuggestionRequestHandler.LimitType limitType;
     private HashMap<String, Interval> intervals = new HashMap<>();
@@ -20,10 +19,10 @@ public class SuggesionResultInterval implements SuggestionResult {
     public Object write() {
         Map<String, Object> suggestions = new HashMap<>();
 
-        HashMap<String, Object> suggestion_intervals = new HashMap<>();
+        HashMap<String, Object> suggestionIntervals = new HashMap<>();
 
-        intervals.keySet().forEach(key -> suggestion_intervals.put(key, intervals.get(key).facets.write()));
-        suggestions.put("suggestion_intervals", suggestion_intervals);
+        intervals.keySet().forEach(key -> suggestionIntervals.put(key, intervals.get(key).getFacets().write()));
+        suggestions.put("suggestion_intervals", suggestionIntervals);
         return suggestions;
     }
 
