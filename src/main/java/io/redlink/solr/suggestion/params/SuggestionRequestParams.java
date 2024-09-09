@@ -1,6 +1,6 @@
 package io.redlink.solr.suggestion.params;
 
-public class SuggestionRequestParams {
+public final class SuggestionRequestParams {
 
     public static final String SUGGESTION = "suggestion";
     public static final String SUGGESTION_FIELD = "suggestion.field";
@@ -20,4 +20,7 @@ public class SuggestionRequestParams {
     public static final String SUGGESTION_INTERVAL_RANGE_START = "suggestion.interval.range.%s.start";
     public static final String SUGGESTION_INTERVAL_RANGE_END = "suggestion.interval.range.%s.end";
     public static final String SUGGESTION_INTERVAL_RANGE_SCORE = "suggestion.interval.range.%s.score";
+
+    private SuggestionRequestParams() {}
+
 }

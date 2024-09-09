@@ -24,7 +24,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     @ClassRule
     public static TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    static private SolrCore core;
+    private static SolrCore core;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -75,11 +75,6 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
         assertU(commit());
     }
 
-    /*@AfterClass
-    public static void afterClass() throws Exception {
-        core.close();
-    }*/
-
     @Test
     public void testSpecialChars() {
 
@@ -117,7 +112,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
      * Attention! To enable this, make sure that you use the WhiteSpaceTokenizer (for query and index).
      */
     @Test
-    @Ignore //At the moment synonyms are not supported in suggestions
+    @Ignore("At the moment synonyms are not supported in suggestions")
     public void testStaticSynonyms() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
@@ -282,8 +277,7 @@ public class IssueExampleTest extends SolrTestCaseJ4 {
     }
 
     //path field integration
-    //Path fields are not supported by Vind
-    @Ignore
+    @Ignore("Path fields are not supported by Vind")
     public void testPathFieldIntegration() {
 
         ModifiableSolrParams params = new ModifiableSolrParams();

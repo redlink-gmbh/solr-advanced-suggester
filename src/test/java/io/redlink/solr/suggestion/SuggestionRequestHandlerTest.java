@@ -24,7 +24,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     @ClassRule
     public static TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    static private SolrCore core;
+    private static SolrCore core;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -39,7 +39,6 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
         PathUtils.copyRecursive(ResourceLoaderUtils.getResourceAsPath("solr-home/config").toAbsolutePath(), coreConfig);
 
         initCore("solrconfig.xml", "schema.xml", solrhome.getAbsolutePath(), "core");
-        //initCore();
         core = h.getCore();
 
         System.getProperties().remove("runtimeLib");
@@ -148,7 +147,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
         params.add(SuggestionRequestParams.SUGGESTION_FIELD, "dynamic_multi_stored_suggest_analyzed_name");
 
         SolrQueryRequest req = new LocalSolrQueryRequest(core, params);
-        //params.add(SuggestionRequestParams.SUGGESTION_DF,"spellcheck");
+        // params.add(SuggestionRequestParams.SUGGESTION_DF,"spellcheck")
 
         assertQ("suggester - simple facet suggestion for 'Sebastian'", req,
                 "//response/lst[@name='suggestions']/int[@name='suggestion_count'][.='1']",
@@ -380,7 +379,7 @@ public class SuggestionRequestHandlerTest extends SolrTestCaseJ4 {
     }
 
     @Test
-    @Ignore //At the moment synonyms are not supported in suggestions
+    @Ignore("At the moment synonyms are not supported in suggestions")
     public void testSynonyms() {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
