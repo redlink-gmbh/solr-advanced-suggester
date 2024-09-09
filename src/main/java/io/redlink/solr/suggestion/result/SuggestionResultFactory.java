@@ -18,7 +18,11 @@ import org.apache.solr.core.SolrCore;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.util.DateMathParser;
 
-public class SuggestionResultFactory {
+public final class SuggestionResultFactory {
+
+    public static final String RESULT_FIELD_COUNT = "count";
+
+    private SuggestionResultFactory() {}
 
     /**
      * create a multi suggestion result
@@ -31,17 +35,18 @@ public class SuggestionResultFactory {
      * @param limit
      * @return a multi suggestion result
      */
+    @SuppressWarnings({"java:S3776", "java:S107"})
     public static SuggestionResult createMultiValueResult(SolrCore core, SolrQueryResponse rsp, String[] fields, String query, String df, int termLimit, int limit, SuggestionRequestHandler.LimitType limitType) {
         SuggestionResultMulti result = new SuggestionResultMulti(limit, limitType);
 
         SimpleOrderedMap facets = (SimpleOrderedMap) ((SimpleOrderedMap) rsp.getValues().get("facet_counts")).get("facet_fields");
 
         //for each word
-        String[] qps = query.split("( |\\+)");
-        LinkedList<List<Facet>> list_of_facet_lists = new LinkedList<>();
+        String[] qps = query.split("([ +])");
+        LinkedList<List<Facet>> listOfFacetLists = new LinkedList<>();
         for (int i = 0; i < qps.length; i++) {
             LinkedList<Facet> l = new LinkedList<>();
-            list_of_facet_lists.addLast(l);
+            listOfFacetLists.addLast(l);
             for (String field : fields) {
                 Iterator<Map.Entry> iter = ((NamedList) facets.get(field)).iterator();
                 while (iter.hasNext()) {
@@ -58,13 +63,11 @@ public class SuggestionResultFactory {
             }
         }
 
-        if (list_of_facet_lists.isEmpty()) return result;
+        if (listOfFacetLists.isEmpty()) {
+            return result;
+        }
 
-        getMultiSuggestions(result, list_of_facet_lists, 0, new ArrayList<Facet>());
-
-        //SuggestionResultMulti.MultiFacet facet = result.createMultiFacet();
-        //facet.add("who","Sebastian Vettel",2);
-        //facet.add("who","Mark Webber",1);
+        getMultiSuggestions(result, listOfFacetLists, 0, new ArrayList<>());
 
         return result;
     }
@@ -80,7 +83,7 @@ public class SuggestionResultFactory {
     private static void getMultiSuggestions(SuggestionResultMulti result, List<List<Facet>> all, int i, List<Facet> list) {
         if (i < all.size()) {
             for (Facet facet : all.get(i)) {
-                List<Facet> fl = new ArrayList<Facet>(list);
+                List<Facet> fl = new ArrayList<>(list);
                 if (!fl.contains(facet)) {
                     fl.add(facet);
                 }
@@ -107,6 +110,7 @@ public class SuggestionResultFactory {
      * @param limit
      * @return a single suggestion result
      */
+    @SuppressWarnings({"java:S3776", "java:S107"})
     public static SuggestionResult createSingleValueResult(SolrCore core, SolrQueryResponse rsp, String[] fields, String q, String op, String df, int termLimit, int limit, SuggestionRequestHandler.LimitType limitType, SuggestionRequestHandler.Strategy strategy, String suggestionField, Map<String, Map<String, Object>> intervals) {
         final SuggesionResultSingle result = new SuggesionResultSingle(limit, limitType);
 
@@ -119,17 +123,19 @@ public class SuggestionResultFactory {
                 pattern = Pattern.compile("^" + Pattern.quote(q.trim()) + "\\S*|\\s" + Pattern.quote(q.trim()) + "\\S*");
                 break;
             case permutate:
-                final String split[] = q.trim().split(" |\\+");
-                String w = "^";
+                final String[] split = q.trim().split("[ +]");
+                StringBuilder w = new StringBuilder("^");
 
-                final int maxLength = split.length > termLimit ? termLimit : split.length;
+                final int maxLength = Math.min(split.length, termLimit);
                 for (int i = 0; i < maxLength; i++) {
                     if (i > 0 && op.equals("OR")) {
-                        w += "|";
+                        w.append("|");
                     }
-                    w += "(?=.*\\b" + Pattern.quote(split[i]) + "\\S*\\b)";
+                    w.append("(?=.*\\b")
+                            .append(Pattern.quote(split[i]))
+                            .append("\\S*\\b)");
                 }
-                pattern = Pattern.compile(w += ".+", Pattern.CASE_INSENSITIVE);
+                pattern = Pattern.compile(w.append(".+").toString(), Pattern.CASE_INSENSITIVE);
                 break;
         }
 
@@ -149,13 +155,13 @@ public class SuggestionResultFactory {
                     final String filterName = fieldName.concat("_filter");
                     if (fieldFilters.get(filterName) != null) {
                         final NamedList fieldResults = (NamedList) fieldFilters.get(filterName);
-                        if ((Long) fieldResults.get("count") > 0) {
+                        if ((Long) fieldResults.get(RESULT_FIELD_COUNT) > 0) {
                             List<NamedList> fieldValues = (List) (((NamedList) fieldResults.get(fieldName)).get("buckets"));
                             fieldValues.forEach(
                                     value -> {
                                         Matcher matcher = word.matcher(FieldAnalyzerService.analyzeString(core, df, value.get("val").toString()));
                                         if (matcher.find()) {
-                                            intervalResult.addFacet(intervalName, fieldName, value.get("val").toString(), ((Long) value.get("count")).intValue(), matcher.start());
+                                            intervalResult.addFacet(intervalName, fieldName, value.get("val").toString(), ((Long) value.get(RESULT_FIELD_COUNT)).intValue(), matcher.start());
                                         }
                                     }
                             );
@@ -168,20 +174,19 @@ public class SuggestionResultFactory {
             for (String fieldName : fields) {
                 final String filterName = fieldName.concat("_filter");
                 final NamedList fieldResults = (NamedList) facets.get(filterName);
-                if ((Long) fieldResults.get("count") > 0) {
+                if ((Long) fieldResults.get(RESULT_FIELD_COUNT) > 0) {
                     final List<NamedList> fieldValues = (List) (((NamedList) fieldResults.get(fieldName)).get("buckets"));
                     fieldValues.forEach(
                             value -> {
                                 final Matcher matcher = word.matcher(FieldAnalyzerService.analyzeString(core, df, value.get("val").toString()));
                                 if (matcher.find()) {
-                                    result.addFacet(fieldName, value.get("val").toString(), ((Long) value.get("count")).intValue(), matcher.start());
+                                    result.addFacet(fieldName, value.get("val").toString(), ((Long) value.get(RESULT_FIELD_COUNT)).intValue(), matcher.start());
                                 }
                             }
                     );
                 }
             }
         }
-
 
         return result;
     }

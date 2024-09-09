@@ -25,6 +25,9 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
     private static final String DEFAULT_END_VALUE = "NOW/DAY";
     private static final double DEFAULT_SCORE_VALUE = 1D;
 
+    private static final String RESPONSE_FIELD_ERROR = "error";
+    private static final String RESPONSE_FIELD_WARNING = "warning";
+
     public enum Type {
         single,
         multi,
@@ -137,121 +140,118 @@ public class SuggestionRequestHandler extends SearchHandler implements SolrCoreA
     }
 
     @Override
+    @SuppressWarnings("java:S3776")
     public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 
         final SolrParams params = req.getParams();
 
-        if (params.getBool(SuggestionRequestParams.SUGGESTION, suggestion)) {
-
-            String q = params.get(CommonParams.Q);
-            if (q == null) {
-                rsp.add("error", error(400, "SuggestionRequest needs to have a 'q' parameter"));
-                return;
-            }
-
-            String[] paramSingleFields = params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) : fields;
-
-            String[] paramMultivalueFields = params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) : multivalueFields;
-
-            if (paramSingleFields == null && paramMultivalueFields == null) {
-                rsp.add("error", error(400, "SuggestionRequest needs to have at least one 'suggestion.field' parameter or one 'suggestion.multivalue.field' parameter defined."));
-                return;
-            }
-
-            int paramTermLimit = params.getInt(SuggestionRequestParams.SUGGESTION_TERM_LIMIT, this.termLimit);
-            if (paramTermLimit < 1) {
-                rsp.add("error", error(400, "SuggestionRequest needs to have a 'suggestion.term.limit' greater than 0"));
-                return;
-            }
-
-            int paramLimit = params.getInt(SuggestionRequestParams.SUGGESTION_LIMIT, this.limit);
-            if (paramLimit < 1) {
-                rsp.add("error", error(400, "SuggestionRequest needs to have a 'suggestion.limit' greater than 0"));
-                return;
-            }
-
-            String paramDf = params.get(SuggestionRequestParams.SUGGESTION_DF, this.df);
-            if (paramDf == null) {
-                rsp.add("error", error(400, "SuggestionRequest needs to have a 'df' parameter"));
-                return;
-            }
-
-            final Strategy paramStrategy = Strategy.parse(params.get(SuggestionRequestParams.SUGGESTION_STRATEGY, null), this.strategy);
-
-            final LimitType paramLimitType = LimitType.parse(params.get(SuggestionRequestParams.SUGGESTION_LIMIT_TYPE, null), this.limitType);
-
-            final String[] paramFqs = params.getParams(CommonParams.FQ) != null ? params.getParams(CommonParams.FQ) : this.fqs;
-
-            Type type;
-
-            if (paramSingleFields != null && paramMultivalueFields == null) {
-                type = Type.single;
-            } else if (paramSingleFields == null) {
-                type = Type.multi;
-                rsp.add("warning", error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
-                //return;
-            } else {
-                type = Type.mixed;
-                rsp.add("warning", error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
-            }
-
-            final String[] allFields = ArrayUtils.addAll(paramSingleFields, paramMultivalueFields);
-
-            ///////////////////////
-            //Suggestion Intervals
-            ///////////////////////
-            final Map<String, Map<String, Object>> rangesMap = new HashMap<>();
-            final String intervalField = params.get(SuggestionRequestParams.SUGGESTION_INTERVAL_FIELD);
-
-            if (params.getBool(SuggestionRequestParams.SUGGESTION_INTERVAL, suggestionInterval)) {
-                final String[] ranges = params.getParams(SuggestionRequestParams.SUGGESTION_INTERVAL_LABEL);
-                if (ranges == null || ranges.length <= 0) {
-                    rsp.add("error", error(400,
-                            "SuggestionRequest needs to have at least one '" + SuggestionRequestParams.SUGGESTION_INTERVAL_LABEL + "' parameter to create intervals"));
-                    return;
-                }
-
-                if (StringUtils.isEmpty(intervalField)) {
-                    rsp.add("error", error(400,
-                            "SuggestionRequest needs to have a '" + SuggestionRequestParams.SUGGESTION_INTERVAL_FIELD + "' parameter to create intervals"));
-                    return;
-                }
-
-                final Boolean other = params.getBool(SuggestionRequestParams.SUGGESTION_INTERVAL_OTHER, suggestionIntervalOther);
-
-                for (int i = 0; i < ranges.length; i++) {
-                    final String label = ranges[i];
-                    final Map<String, Object> rangeConfigurations = new HashMap<>();
-
-                    final String rangeStartParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_START, label);
-                    final Object startValue = params.get(rangeStartParam);
-                    if (startValue == null) {
-                        rsp.add("error", error(400,
-                                "SuggestionRequest needs to have a '" + String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_START, label) + "' parameter to create an interval"));
-                        return;
-                    }
-                    rangeConfigurations.put("start", startValue);
-
-                    final String rangeEndParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_END, label);
-                    final Object endValue = params.get(rangeEndParam, DEFAULT_END_VALUE);
-                    rangeConfigurations.put("end", endValue);
-
-                    final String rangeScoreParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_SCORE, label);
-                    double scoreValue = params.getDouble(rangeScoreParam, DEFAULT_SCORE_VALUE);
-                    rangeConfigurations.put("score", scoreValue);
-
-                    rangesMap.put(label, rangeConfigurations);
-                }
-
-            }
-
-            LOGGER.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, paramFqs != null ? StringUtils.join(paramFqs, ",") : "none");
-
-            suggestionService.run(rsp, params, q, paramDf, allFields, paramSingleFields, paramMultivalueFields, paramFqs, paramTermLimit, paramLimit, paramLimitType, type, paramStrategy, intervalField, rangesMap);
-
-        } else {
+        if (!params.getBool(SuggestionRequestParams.SUGGESTION, suggestion)) {
             super.handleRequestBody(req, rsp);
+            return;
         }
+
+        String q = params.get(CommonParams.Q);
+        if (q == null) {
+            rsp.add(RESPONSE_FIELD_ERROR, error(400, "SuggestionRequest needs to have a 'q' parameter"));
+            return;
+        }
+
+        String[] paramSingleFields = params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_FIELD) : fields;
+
+        String[] paramMultivalueFields = params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) != null ? params.getParams(SuggestionRequestParams.SUGGESTION_MULTIVALUE_FIELD) : multivalueFields;
+
+        if (paramSingleFields == null && paramMultivalueFields == null) {
+            rsp.add(RESPONSE_FIELD_ERROR, error(400, "SuggestionRequest needs to have at least one 'suggestion.field' parameter or one 'suggestion.multivalue.field' parameter defined."));
+            return;
+        }
+
+        int paramTermLimit = params.getInt(SuggestionRequestParams.SUGGESTION_TERM_LIMIT, this.termLimit);
+        if (paramTermLimit < 1) {
+            rsp.add(RESPONSE_FIELD_ERROR, error(400, "SuggestionRequest needs to have a 'suggestion.term.limit' greater than 0"));
+            return;
+        }
+
+        int paramLimit = params.getInt(SuggestionRequestParams.SUGGESTION_LIMIT, this.limit);
+        if (paramLimit < 1) {
+            rsp.add(RESPONSE_FIELD_ERROR, error(400, "SuggestionRequest needs to have a 'suggestion.limit' greater than 0"));
+            return;
+        }
+
+        String paramDf = params.get(SuggestionRequestParams.SUGGESTION_DF, this.df);
+        if (paramDf == null) {
+            rsp.add(RESPONSE_FIELD_ERROR, error(400, "SuggestionRequest needs to have a 'df' parameter"));
+            return;
+        }
+
+        final Strategy paramStrategy = Strategy.parse(params.get(SuggestionRequestParams.SUGGESTION_STRATEGY, null), this.strategy);
+
+        final LimitType paramLimitType = LimitType.parse(params.get(SuggestionRequestParams.SUGGESTION_LIMIT_TYPE, null), this.limitType);
+
+        final String[] paramFqs = params.getParams(CommonParams.FQ) != null ? params.getParams(CommonParams.FQ) : this.fqs;
+
+        final Type type;
+        if (paramSingleFields != null && paramMultivalueFields == null) {
+            type = Type.single;
+        } else if (paramSingleFields == null) {
+            type = Type.multi;
+            rsp.add(RESPONSE_FIELD_WARNING, error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
+        } else {
+            type = Type.mixed;
+            rsp.add(RESPONSE_FIELD_WARNING, error(410, "Multivalue suggestions are deprecated and will not be supported in further versions"));
+        }
+
+        final String[] allFields = ArrayUtils.addAll(paramSingleFields, paramMultivalueFields);
+
+        ///////////////////////
+        //Suggestion Intervals
+        ///////////////////////
+        final Map<String, Map<String, Object>> rangesMap = new HashMap<>();
+        final String intervalField = params.get(SuggestionRequestParams.SUGGESTION_INTERVAL_FIELD);
+
+        if (params.getBool(SuggestionRequestParams.SUGGESTION_INTERVAL, suggestionInterval)) {
+            final String[] ranges = params.getParams(SuggestionRequestParams.SUGGESTION_INTERVAL_LABEL);
+            if (ranges == null || ranges.length <= 0) {
+                rsp.add(RESPONSE_FIELD_ERROR, error(400,
+                        "SuggestionRequest needs to have at least one '" + SuggestionRequestParams.SUGGESTION_INTERVAL_LABEL + "' parameter to create intervals"));
+                return;
+            }
+
+            if (StringUtils.isEmpty(intervalField)) {
+                rsp.add(RESPONSE_FIELD_ERROR, error(400,
+                        "SuggestionRequest needs to have a '" + SuggestionRequestParams.SUGGESTION_INTERVAL_FIELD + "' parameter to create intervals"));
+                return;
+            }
+
+            final Boolean other = params.getBool(SuggestionRequestParams.SUGGESTION_INTERVAL_OTHER, suggestionIntervalOther);
+
+            for (int i = 0; i < ranges.length; i++) {
+                final String label = ranges[i];
+                final Map<String, Object> rangeConfigurations = new HashMap<>();
+
+                final String rangeStartParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_START, label);
+                final Object startValue = params.get(rangeStartParam);
+                if (startValue == null) {
+                    rsp.add(RESPONSE_FIELD_ERROR, error(400,
+                            "SuggestionRequest needs to have a '" + String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_START, label) + "' parameter to create an interval"));
+                    return;
+                }
+                rangeConfigurations.put("start", startValue);
+
+                final String rangeEndParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_END, label);
+                final Object endValue = params.get(rangeEndParam, DEFAULT_END_VALUE);
+                rangeConfigurations.put("end", endValue);
+
+                final String rangeScoreParam = String.format(SuggestionRequestParams.SUGGESTION_INTERVAL_RANGE_SCORE, label);
+                double scoreValue = params.getDouble(rangeScoreParam, DEFAULT_SCORE_VALUE);
+                rangeConfigurations.put("score", scoreValue);
+
+                rangesMap.put(label, rangeConfigurations);
+            }
+
+        }
+
+        LOGGER.debug("Get suggestions for query '{}', type: {}, fqs: {}", q, type, paramFqs != null ? StringUtils.join(paramFqs, ",") : "none");
+        suggestionService.run(rsp, params, q, paramDf, allFields, paramSingleFields, paramMultivalueFields, paramFqs, paramTermLimit, paramLimit, paramLimitType, type, paramStrategy, intervalField, rangesMap);
     }
 
     private HashMap<String, Object> error(int code, String msg) {

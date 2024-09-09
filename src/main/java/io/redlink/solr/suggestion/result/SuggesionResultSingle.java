@@ -27,11 +27,11 @@ public class SuggesionResultSingle implements SuggestionResult {
     public Object write() {
         NamedList<Object> suggestions = new NamedList<>();
 
-        NamedList<Object> suggestion_facets = new NamedList<>();
+        NamedList<Object> suggestionFacets = new NamedList<>();
 
         //sort results
         for (String field : fields.keySet()) {
-            Collections.sort(fields.get(field), COUNT_SORTER);
+            fields.get(field).sort(COUNT_SORTER);
         }
 
         //crop results
@@ -48,13 +48,13 @@ public class SuggesionResultSingle implements SuggestionResult {
                 count++;
             }
 
-            suggestion_facets.add(field, facets);
+            suggestionFacets.add(field, facets);
         }
 
         suggestions.add(SuggestionResultParams.SUGGESTION_COUNT, count);
 
         if (count > 0) {
-            suggestions.add(SuggestionResultParams.SUGGESTION_FACETS, suggestion_facets);
+            suggestions.add(SuggestionResultParams.SUGGESTION_FACETS, suggestionFacets);
         }
 
         return suggestions;
@@ -63,6 +63,7 @@ public class SuggesionResultSingle implements SuggestionResult {
     /**
      * crop to limit
      */
+    @SuppressWarnings("java:S3776")
     private void cropResult() {
         if (limitType == SuggestionRequestHandler.LimitType.each) {
             for (String field : fields.keySet()) {
@@ -71,12 +72,10 @@ public class SuggesionResultSingle implements SuggestionResult {
                 }
             }
         } else {
-            HashMap<String, List<Facet>> _f = new HashMap<String, List<Facet>>();
+            HashMap<String, List<Facet>> facetsMap = new HashMap<>();
             boolean more = true;
             int number = 0;
             int c = 0;
-
-            //long time = System.currentTimeMillis();
 
             while (c < limit && more) {
                 more = false;
@@ -84,35 +83,28 @@ public class SuggesionResultSingle implements SuggestionResult {
                     if (fields.get(field).size() > number) {
                         more = true;
                         c++;
-                        if (!_f.containsKey(field)) {
-                            _f.put(field, new ArrayList<Facet>());
-                        }
-                        _f.get(field).add(fields.get(field).get(number));
+                        facetsMap.computeIfAbsent(field, k -> new ArrayList<>())
+                                .add(fields.get(field).get(number));
                     }
                     if (c == limit) break;
                 }
                 number++;
             }
 
-            //System.out.println("Time for ordering: "+(System.currentTimeMillis()-time));
-
-            fields = _f;
+            fields = facetsMap;
         }
     }
 
     public void addFacet(String field, String value, int count, int position) {
-        if (fields.get(field) == null) {
-            fields.put(field, new ArrayList<>());
-        }
-
-        fields.get(field).add(new Facet(value, count, position));
+        fields.computeIfAbsent(field, k -> new ArrayList<>())
+                .add(new Facet(value, count, position));
     }
 
     public int getCount() {
         return fields.size();
     }
 
-    class Facet implements Comparable<Facet> {
+    static class Facet implements Comparable<Facet> {
 
         int position;
         String value;

@@ -23,7 +23,7 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
     @ClassRule
     public static TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    static private SolrCore core;
+    private static SolrCore core;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -82,11 +82,6 @@ public class PivotRegexBasedSuggestionTest extends SolrTestCaseJ4 {
                 "dynamic_multi_stored_suggest_date_date", "2016-09-07T10:00:00Z"));
         assertU(commit());
     }
-
-    /*@AfterClass
-    public static void afterClass() throws Exception {
-        core.close();
-    }*/
 
     /**
      *
