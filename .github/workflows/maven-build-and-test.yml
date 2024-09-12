@@ -21,12 +21,15 @@ jobs:
       matrix:
         solr:
           - 9.0.0
-          - 9.1.1
           - 9.2.1
           - 9.3.0
           - 9.4.1
           - 9.5.0
           - 9.6.1
+          - 9.7.0
+        include:
+          - solr: 9.7.0
+            sonar: enabled
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,7 +47,7 @@ jobs:
           -Dsolr.version=${{matrix.solr}}
           -Psonarcloud
           -Dsonar.projectKey=redlink-gmbh_solr-advanced-suggester
-          -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
+          -Dsonar.skip=${{ github.actor == 'dependabot[bot]' || matrix.sonar != 'enabled' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
