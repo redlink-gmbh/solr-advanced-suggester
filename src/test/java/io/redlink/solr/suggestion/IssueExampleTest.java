@@ -1,46 +1,19 @@
 package io.redlink.solr.suggestion;
 
 import io.redlink.solr.suggestion.params.SuggestionRequestParams;
-import io.redlink.utils.PathUtils;
-import io.redlink.utils.ResourceLoaderUtils;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.LocalSolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequest;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-public class IssueExampleTest extends SolrTestCaseJ4 {
-
-    @ClassRule
-    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    private static SolrCore core;
+public class IssueExampleTest extends AbstractTestBase {
 
     @BeforeClass
-    public static void init() throws Exception {
-        System.setProperty("runtimeLib", "false");
-        System.setProperty("solr.lock.type", "single");
-
-        final File solrhome = temporaryFolder.newFolder("solrhome");
-        final Path coreConfig = solrhome.toPath().resolve("core/conf");
-        Files.createDirectories(coreConfig);
-        PathUtils.copyRecursive(ResourceLoaderUtils.getResourceAsPath("solr-home/config").toAbsolutePath(), coreConfig);
-
-        initCore("solrconfig.xml", "schema.xml", solrhome.getAbsolutePath(), "core");
-        core = h.getCore();
-
-        System.getProperties().remove("runtimeLib");
-
+    public static void init() {
         assertU(adoc("_id_", "1",
                 "_type_", "Asset",
                 "dynamic_multi_stored_suggest_analyzed_name", "Sebastian Vettel",
