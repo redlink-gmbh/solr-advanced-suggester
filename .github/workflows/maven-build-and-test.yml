@@ -58,8 +58,8 @@ jobs:
           name: Test Results (Solr ${{matrix.solr}})
           path: '**/TEST-*.xml'
 
-  publish-test-results:
-    name: Publish Test Results
+  test-results:
+    name: Test Results
     needs: [ build ]
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
@@ -68,8 +68,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: test-results
-      - name: Publish Test-Results
+      - name: Report Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: 'test-results/**/TEST-*.xml'
+          action_fail: 'true'
           action_fail_on_inconclusive: 'true'
