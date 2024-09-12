@@ -14,8 +14,19 @@ permissions:
 
 jobs:
   build:
-    name: Build and Test
+    name: Build and Test (Solr ${{ matrix.solr }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        solr:
+          - 9.0.0
+          - 9.1.1
+          - 9.2.1
+          - 9.3.0
+          - 9.4.1
+          - 9.5.0
+          - 9.6.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,14 +41,32 @@ jobs:
       - name: Compile & Test
         run: ./mvnw -V -B --no-transfer-progress
           clean verify
+          -Dsolr.version=${{matrix.solr}}
           -Psonarcloud
           -Dsonar.projectKey=redlink-gmbh_solr-advanced-suggester
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - name: Upload Test-Results
         if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
         with:
-          files: '**/TEST-*.xml'
+          name: Test Results (Solr ${{matrix.solr}})
+          path: '**/TEST-*.xml'
+
+  publish-test-results:
+    name: Publish Test Results
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Fetch Test-Results
+        uses: actions/download-artifact@v4
+        with:
+          path: test-results
+      - name: Publish Test-Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: 'test-results/**/TEST-*.xml'
+          action_fail_on_inconclusive: 'true'
