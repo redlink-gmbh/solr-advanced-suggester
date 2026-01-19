@@ -32,7 +32,7 @@ jobs:
             sonar: enabled
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up Java/Maven
@@ -53,7 +53,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Test-Results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Test Results (Solr ${{matrix.solr}})
           path: '**/TEST-*.xml'
@@ -65,7 +65,7 @@ jobs:
     if: ${{ !cancelled() }}
     steps:
       - name: Fetch Test-Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: test-results
       - name: Report Results
