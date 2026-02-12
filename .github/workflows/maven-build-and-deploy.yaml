@@ -43,8 +43,11 @@ jobs:
           - 9.5.0
           - 9.6.1
           - 9.7.0
+          - 9.8.1
+          - 9.9.0
+          - 9.10.1
         include:
-          - solr: 9.7.0
+          - solr: 9.10.1
             sonar: enabled
     steps:
       - name: Checkout
